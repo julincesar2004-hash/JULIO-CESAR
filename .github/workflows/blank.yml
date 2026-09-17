@@ -1,0 +1,33 @@
+name: Configurar PC Virtual Windows
+
+on:
+  workflow_dispatch:
+
+jobs:
+  configurar:
+    runs-on: windows-latest
+
+    steps:
+      - name: Informações do sistema
+        shell: powershell
+        run: |
+          Write-Host "=== PC VIRTUAL ===" -ForegroundColor Green
+          Write-Host "Computador: $env:COMPUTERNAME"
+          Write-Host "Usuário: $env:USERNAME"
+          Get-ComputerInfo |
+            Select-Object WindowsProductName, WindowsVersion
+
+      - name: Verificar RDP
+        shell: powershell
+        run: |
+          Write-Host "Verificando Área de Trabalho Remota..."
+          Get-Service TermService |
+            Select-Object Status, StartType
+
+      - name: Verificar rede
+        shell: powershell
+        run: |
+          Write-Host "=== CONFIGURAÇÃO DE REDE ==="
+          Get-NetIPAddress -AddressFamily IPv4 |
+            Where-Object {$_.IPAddress -notlike "127.*"} |
+            Select-Object IPAddress, InterfaceAlias
